@@ -1,0 +1,4 @@
+[core]
+    remote = myddsp_data
+['remote "myddsp_data"']
+    url = gdrive://1YVNpUDOR1ASD4WF3ucH5JRGf3jfvBXBJ
