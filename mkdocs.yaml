@@ -1,0 +1,21 @@
+site_name: MyDDSP Docs
+
+theme:
+  name: "material"
+
+watch:
+  - src
+
+plugins:
+  - search
+  - mkdocstrings:
+      handlers:
+        python:
+          paths: [src]
+  - mike:
+      canonical_version: "latest"
+      version_selector: true
+
+extra:
+  version:
+    provider: mike
