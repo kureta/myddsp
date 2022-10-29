@@ -126,15 +126,15 @@ repos:
     rev: v0.982
     hooks:
       - id: mypy
-        args:
-          [
+        args: [
             --disallow-untyped-def,
-            --disallow-any-unimported,
+            # --disallow-any-unimported,
             --no-implicit-optional,
             --check-untyped-defs,
             --warn-return-any,
             --warn-unused-ignores,
             --show-error-codes,
+            --ignore-missing-imports,
           ]
 
   - repo: https://github.com/asottile/blacken-docs
