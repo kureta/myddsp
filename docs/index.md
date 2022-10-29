@@ -2,4 +2,10 @@
 
 ## Reference
 
+## MyDDSP
+
 ::: myddsp
+
+## Constants module
+
+::: myddsp.constants
