@@ -18,7 +18,6 @@ from torch.nn import functional as F
 import myddsp.constants as C
 
 # TODO: use the same loudness to trim silence.
-# TODO: fix mixed use of ndarray amd Tensor.
 
 
 def phase_shuffle(y: Tensor) -> Tensor:
