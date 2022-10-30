@@ -7,7 +7,7 @@ The module contains the following feature extractors:
 - `LegacyLoudness` - The one I used originally. Its dynamic range is somehow compressed, and it is noisy.
 - `Loudness` - Based on`Loudness` from `torchaudio`.
 """
-
+import einops
 import librosa
 import numpy as np
 import torch
@@ -105,9 +105,11 @@ def center(y: Tensor, window_length: int = C.N_FFT, hop_length: int = C.HOP_LENG
     return centered
 
 
-def get_frames(
-    y: np.array, window_length: int = C.N_FFT, hop_length: int = C.HOP_LENGTH
-) -> np.array:
+def make_frames(y: Tensor, window_length: int = C.N_FFT, hop_length: int = C.HOP_LENGTH) -> Tensor:
+    return y.unfold(-1, window_length, hop_length).transpose(-1, -2)
+
+
+def get_frames(y: Tensor, window_length: int = C.N_FFT, hop_length: int = C.HOP_LENGTH) -> Tensor:
     """Generates frames of moving windows given hop length.
 
     Args:
@@ -122,7 +124,7 @@ def get_frames(
         >>> y = torch.randn(8, 2, 48000)
         >>> frames = get_frames(y)
         >>> frames.shape
-        (8, 2, 3072, 235)
+        torch.Size([8, 2, 3072, 235])
 
     Raises:
         ValueError: if tensor length is shorter than window length.
@@ -133,9 +135,7 @@ def get_frames(
     if length < window_length:
         raise ValueError("Example length cannot be shorter than the length of a single frame!")
 
-    frames = librosa.util.frame(
-        y_divisible, frame_length=window_length, hop_length=hop_length, writeable=True
-    )
+    frames = make_frames(y_divisible, window_length, hop_length)
 
     return frames
 
@@ -159,7 +159,7 @@ def get_centered_frames(
         >>> y = torch.randn(8, 2, 48000)
         >>> frames = get_centered_frames(y)
         >>> frames.shape
-        (8, 2, 3072, 251)
+        torch.Size([8, 2, 3072, 251])
     """
     centered = center(y, window_length, hop_length)
     frames = get_frames(centered, window_length, hop_length)
@@ -167,39 +167,34 @@ def get_centered_frames(
     return frames
 
 
-class LegacyLoudness(nn.Module):
-    def __init__(self) -> None:
+class Loudness(nn.Module):
+    def __init__(self, window_length: int = C.N_FFT):
         super().__init__()
+        self.window_length = window_length
+
         frequencies = librosa.fft_frequencies(sr=C.SAMPLE_RATE, n_fft=C.N_FFT).astype("float32")
-        a_weighting = librosa.A_weighting(frequencies)[None, :].astype("float32")
+        a_weighting = librosa.A_weighting(frequencies).astype("float32")
+        a_weighting = 10 ** (a_weighting / 10)
         self.register_buffer("a_weighting", torch.from_numpy(a_weighting))
 
+        window = torch.hann_window(window_length)
+        self.register_buffer("window", window)
+
     def forward(self, x: Tensor) -> Tensor:
-        # to mono
         x = x.mean(1)
-        window = torch.hann_window(C.N_FFT).to(x.device)
-        s = torch.stft(
-            x,
-            n_fft=C.N_FFT,
-            hop_length=C.HOP_LENGTH,
-            window=window,
-            return_complex=True,
-            # pad_mode="reflect",
-            center=False,
-            normalized=True,
-        ).transpose(1, 2)
 
-        # Compute power.
-        amplitude = torch.abs(s)
+        frames = get_centered_frames(x)
+        windowed = einops.einsum(frames, self.window, "b n f, n -> b n f")
+
+        amplitude = torch.fft.rfft(windowed, dim=-2, norm="ortho").abs()
+
         power = amplitude**2
+        power = einops.einsum(power, self.a_weighting, "b n f, n -> b n f")
 
-        weighting = 10 ** (self.a_weighting / 10)
-        power = power * weighting
-
-        power = torch.mean(power, dim=-1)
+        power = torch.mean(power, dim=-2, keepdim=True)
         loudness = 10.0 * torch.log10(
             torch.maximum(torch.tensor(1e-10, device=power.device), power)
         )
         loudness = torch.maximum(loudness, loudness.max() - 80.0)
 
-        return loudness.unsqueeze(1)
+        return loudness
