@@ -45,7 +45,6 @@ wandb = "^0.13.4"
 jupyter = "^1.0.0"
 matplotlib = "^3.6.1"
 einops = "^0.5.0"
-nbstripout = "^0.6.1"
 
 [tool.poetry.group.dev]
 optional = true
@@ -61,6 +60,7 @@ pre-commit = "^2.20.0"
 mkdocs = "^1.4.1"
 mkdocs-material = "^8.5.7"
 mkdocstrings = {extras = ["python"], version = "^0.19.0"}
+nbstripout = "^0.6.1"
 
 [build-system]
 requires = ["poetry-core"]

@@ -2121,7 +2121,7 @@ test = ["check-manifest", "pep440", "pre-commit", "pytest", "testpath"]
 name = "nbstripout"
 version = "0.6.1"
 description = "Strips outputs from Jupyter and IPython notebooks"
-category = "main"
+category = "dev"
 optional = false
 python-versions = ">=3.6"
 
@@ -3679,7 +3679,7 @@ test = ["zope.testing"]
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.10"
-content-hash = "e819a07d32eab2c3b11db91e6d6b2be7c922d123590ffd6a284babc2a472222c"
+content-hash = "d19e20b5a2c40800809f2cc834af1edec6f1506eeb55a85c5ea6f49f6465bcfd"
 
 [metadata.files]
 absl-py = [
