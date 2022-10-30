@@ -11,11 +11,11 @@ import einops
 import librosa
 import numpy as np
 import torch
-import torch.nn as nn
-from torch import Tensor
+from torch import Tensor, nn
 from torch.nn import functional as F
 
 import myddsp.constants as C
+from myddsp.crepe import load_model
 
 # TODO: use the same loudness to trim silence.
 
@@ -181,8 +181,8 @@ class Loudness(nn.Module):
 
     def forward(self, x: Tensor) -> Tensor:
         x = x.mean(1)
-
         frames = get_centered_frames(x)
+
         windowed = einops.einsum(frames, self.window, "b n f, n -> b n f")
 
         amplitude = torch.fft.rfft(windowed, dim=-2, norm="ortho").abs()
@@ -197,3 +197,22 @@ class Loudness(nn.Module):
         loudness = torch.maximum(loudness, loudness.max() - 80.0)
 
         return loudness
+
+
+class F0(nn.Module):
+    def __init__(self, capacity: str = "full"):
+        super().__init__()
+        self.model = load_model(capacity)
+
+    def forward(self, x: Tensor) -> Tensor:
+        x = x.mean(1)
+        frames = get_centered_frames(x, C.CREPE_N_FFT, C.CREPE_HOP_LENGTH)
+
+        b, n, f = frames.shape
+        batched = einops.rearrange(frames, "b n f -> (b f) n")
+        zeroed = batched - batched.mean(dim=1, keepdim=True)
+        normalized = zeroed / zeroed.std(dim=1, keepdim=True)
+
+        activations = self.model(normalized)
+
+        return activations

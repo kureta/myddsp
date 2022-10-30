@@ -144,8 +144,8 @@ def load_model(capacity: str = "full") -> Crepe:
     model = Crepe(capacity)
 
     # Load weights
-    file = Path(f"./checkpoints/crepe/{capacity}.pth")
+    this_dir = Path(__file__).parent.parent.parent
+    file = this_dir / f"checkpoints/crepe/{capacity}.pth"
     model.load_state_dict(torch.load(file))
-    model.eval()
 
     return model
