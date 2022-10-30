@@ -277,6 +277,13 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#myddsp.preprocessors.get_centered_frames" class="md-nav__link">
+    get_centered_frames()
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#myddsp.preprocessors.get_frames" class="md-nav__link">
     get_frames()
   </a>
@@ -383,6 +390,13 @@
         <li class="md-nav__item">
   <a href="#myddsp.preprocessors.center" class="md-nav__link">
     center()
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#myddsp.preprocessors.get_centered_frames" class="md-nav__link">
+    get_centered_frames()
   </a>
   
 </li>
@@ -663,6 +677,147 @@ time inference implementation.</p>
 
 
 
+<h2 id="myddsp.preprocessors.get_centered_frames" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">get_centered_frames</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">window_length</span><span class="o">=</span><span class="n">C</span><span class="o">.</span><span class="n">N_FFT</span><span class="p">,</span> <span class="n">hop_length</span><span class="o">=</span><span class="n">C</span><span class="o">.</span><span class="n">HOP_LENGTH</span><span class="p">)</span></code>
+
+<a href="#myddsp.preprocessors.get_centered_frames" class="headerlink" title="Permanent link">&para;</a></h2>
+
+
+  <div class="doc doc-contents ">
+  
+      <p>Generates centered frames of moving windows given hop length.</p>
+<p>Centeres the audio before calling <code>get_frames</code> on it.</p>
+
+  <p><strong>Parameters:</strong></p>
+  <table>
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Type</th>
+        <th>Description</th>
+        <th>Default</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td><code>y</code></td>
+          <td>
+                <code><span title="torch.Tensor">Tensor</span></code>
+          </td>
+          <td><p>tensor of shape <code>[..., S]</code></p></td>
+          <td>
+              <em>required</em>
+          </td>
+        </tr>
+        <tr>
+          <td><code>window_length</code></td>
+          <td>
+                <code>int</code>
+          </td>
+          <td><p>length of each frame</p></td>
+          <td>
+                <code>C.N_FFT</code>
+          </td>
+        </tr>
+        <tr>
+          <td><code>hop_length</code></td>
+          <td>
+                <code>int</code>
+          </td>
+          <td><p>hop length</p></td>
+          <td>
+                <code>C.HOP_LENGTH</code>
+          </td>
+        </tr>
+    </tbody>
+  </table>
+
+  <p><strong>Returns:</strong></p>
+  <table>
+    <thead>
+      <tr>
+<th>Name</th>        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+<td><code>frames</code></td>          <td>
+                <code><span title="torch.Tensor">Tensor</span></code>
+          </td>
+          <td><p>audio frames of shape <code>[..., W, F]</code></p></td>
+        </tr>
+    </tbody>
+  </table>
+
+<p><strong>Examples:</strong></p>
+    <div class="highlight"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="n">y</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">48000</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">frames</span> <span class="o">=</span> <span class="n">get_centered_frames</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">frames</span><span class="o">.</span><span class="n">shape</span>
+<span class="go">(8, 2, 3072, 251)</span>
+</code></pre></div>
+
+      <details class="quote">
+        <summary>Source code in <code>myddsp/preprocessors.py</code></summary>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">143</span>
+<span class="normal">144</span>
+<span class="normal">145</span>
+<span class="normal">146</span>
+<span class="normal">147</span>
+<span class="normal">148</span>
+<span class="normal">149</span>
+<span class="normal">150</span>
+<span class="normal">151</span>
+<span class="normal">152</span>
+<span class="normal">153</span>
+<span class="normal">154</span>
+<span class="normal">155</span>
+<span class="normal">156</span>
+<span class="normal">157</span>
+<span class="normal">158</span>
+<span class="normal">159</span>
+<span class="normal">160</span>
+<span class="normal">161</span>
+<span class="normal">162</span>
+<span class="normal">163</span>
+<span class="normal">164</span>
+<span class="normal">165</span>
+<span class="normal">166</span>
+<span class="normal">167</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">get_centered_frames</span><span class="p">(</span>
+    <span class="n">y</span><span class="p">:</span> <span class="n">Tensor</span><span class="p">,</span> <span class="n">window_length</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">C</span><span class="o">.</span><span class="n">N_FFT</span><span class="p">,</span> <span class="n">hop_length</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">C</span><span class="o">.</span><span class="n">HOP_LENGTH</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tensor</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Generates centered frames of moving windows given hop length.</span>
+
+<span class="sd">    Centeres the audio before calling `get_frames` on it.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        y: tensor of shape `[..., S]`</span>
+<span class="sd">        window_length: length of each frame</span>
+<span class="sd">        hop_length: hop length</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        frames: audio frames of shape `[..., W, F]`</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">        &gt;&gt;&gt; y = torch.randn(8, 2, 48000)</span>
+<span class="sd">        &gt;&gt;&gt; frames = get_centered_frames(y)</span>
+<span class="sd">        &gt;&gt;&gt; frames.shape</span>
+<span class="sd">        (8, 2, 3072, 251)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">centered</span> <span class="o">=</span> <span class="n">center</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
+    <span class="n">frames</span> <span class="o">=</span> <span class="n">get_frames</span><span class="p">(</span><span class="n">centered</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">frames</span>
+</code></pre></div></td></tr></table></div>
+      </details>
+  </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+
 <h2 id="myddsp.preprocessors.get_frames" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">get_frames</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">window_length</span><span class="o">=</span><span class="n">C</span><span class="o">.</span><span class="n">N_FFT</span><span class="p">,</span> <span class="n">hop_length</span><span class="o">=</span><span class="n">C</span><span class="o">.</span><span class="n">HOP_LENGTH</span><span class="p">)</span></code>
 
@@ -736,7 +891,7 @@ time inference implementation.</p>
   </table>
 
 <p><strong>Examples:</strong></p>
-    <div class="highlight"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="n">y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">48000</span><span class="p">)</span>
+    <div class="highlight"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="n">y</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">48000</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">frames</span> <span class="o">=</span> <span class="n">get_frames</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">frames</span><span class="o">.</span><span class="n">shape</span>
 <span class="go">(8, 2, 3072, 235)</span>
@@ -808,7 +963,7 @@ time inference implementation.</p>
 <span class="sd">        frames: audio frames of shape `[..., W, F]`</span>
 
 <span class="sd">    Examples:</span>
-<span class="sd">        &gt;&gt;&gt; y = np.random.randn(8, 2, 48000)</span>
+<span class="sd">        &gt;&gt;&gt; y = torch.randn(8, 2, 48000)</span>
 <span class="sd">        &gt;&gt;&gt; frames = get_frames(y)</span>
 <span class="sd">        &gt;&gt;&gt; frames.shape</span>
 <span class="sd">        (8, 2, 3072, 235)</span>
