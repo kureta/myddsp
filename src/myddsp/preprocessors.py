@@ -18,6 +18,7 @@ from torch.nn import functional as F
 import myddsp.constants as C
 
 # TODO: use the same loudness to trim silence.
+# TODO: fix mixed use of ndarray amd Tensor.
 
 
 def phase_shuffle(y: Tensor) -> Tensor:
@@ -36,17 +37,18 @@ def phase_shuffle(y: Tensor) -> Tensor:
     return y_phase_randomized
 
 
-def make_divisible_by_hop_length(y: Tensor) -> Tensor:
+def make_divisible_by_hop_length(
+    y: Tensor, window_length: int = C.N_FFT, hop_length: int = C.HOP_LENGTH
+) -> Tensor:
     """Right pads a batch of audio examples to the nearest multiple of `HOP_SIZE`
 
-    !!! warning
-        Example length cannot be zero.
-
     Args:
-        y: batch of examples, tensor of shape `[B, C, S]`
+        y: tensor of shape `[..., S]`
+        window_length: window length
+        hop_length: hop length
 
     Returns:
-        y_padded: padded examples, tensor of shape `[B, C, S]`
+        y_padded: right padded examples, tensor of shape `[..., S]`
 
     Raises:
         ValueError: if tensor is not in the required shape.
@@ -63,29 +65,54 @@ def make_divisible_by_hop_length(y: Tensor) -> Tensor:
             ...
         ValueError:...
     """
-    if len(y.shape) != 3:
-        raise ValueError("Tensor must have exactly 3 dimensions [B, C, S]")
-
-    length = y.shape[2]
+    length = y.shape[-1]
 
     if length <= 0:
-        raise ValueError("Example length cannot be zero!")
+        raise ValueError("Example length must be strictly positive!")
 
-    remainder = length % C.HOP_LENGTH
-    padding = C.HOP_LENGTH - remainder
+    remainder = (length - window_length) % hop_length
+    if remainder == 0:
+        # already divisible by hop length
+        return y
+    padding = hop_length - remainder
 
     y_padded = F.pad(y, (0, padding), mode="constant", value=0.0)
 
     return y_padded
 
 
-def get_frames(y: np.array, hop_length: int = C.HOP_LENGTH) -> np.array:
-    """Generates frames of moving windows given hop length.
-
-    Window size is a constant, hop length may become a parameter in the future.
+def center(y: Tensor, window_length: int = C.N_FFT, hop_length: int = C.HOP_LENGTH) -> Tensor:
+    """Centers signal based on fft window size.
 
     Args:
         y: tensor of shape `[..., S]`
+        window_length: window length
+        hop_length: hop length
+
+    Returns:
+        y_centered: centered tensor of shape `[..., S]`
+
+    Raises:
+        ValueError: window length must be divisible by 2
+    """
+    if (window_length % 2) != 0:
+        ValueError("Window length must be divisible by 2")
+
+    y_divisible = make_divisible_by_hop_length(y, window_length, hop_length)
+    padding = window_length // 2
+    centered = F.pad(y_divisible, (padding, padding))
+
+    return centered
+
+
+def get_frames(
+    y: np.array, window_length: int = C.N_FFT, hop_length: int = C.HOP_LENGTH
+) -> np.array:
+    """Generates frames of moving windows given hop length.
+
+    Args:
+        y: tensor of shape `[..., S]`
+        window_length: length of each frame
         hop_length: hop length
 
     Returns:
@@ -98,16 +125,26 @@ def get_frames(y: np.array, hop_length: int = C.HOP_LENGTH) -> np.array:
         (8, 2, 3072, 235)
 
     Raises:
-        ValueError: if tensor length is not divisible by hop length or shorter than window length.
+        ValueError: if tensor length is shorter than window length.
     """
-    length = y.shape[-1]
-    if (length % hop_length) != 0:
-        raise ValueError("Example length must be divisible by hop length!")
+    y_divisible = make_divisible_by_hop_length(y, window_length, hop_length)
+    length = y_divisible.shape[-1]
 
-    if length < C.N_FFT:
+    if length < window_length:
         raise ValueError("Example length cannot be shorter than the length of a single frame!")
 
-    frames = librosa.util.frame(y, frame_length=C.N_FFT, hop_length=hop_length, writeable=True)
+    frames = librosa.util.frame(
+        y_divisible, frame_length=window_length, hop_length=hop_length, writeable=True
+    )
+
+    return frames
+
+
+def get_centered_frames(
+    y: Tensor, window_length: int = C.N_FFT, hop_length: int = C.HOP_LENGTH
+) -> Tensor:
+    centered = center(y)
+    frames = get_frames(centered)
 
     return frames
 
