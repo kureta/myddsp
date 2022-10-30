@@ -119,7 +119,7 @@ def get_frames(
         frames: audio frames of shape `[..., W, F]`
 
     Examples:
-        >>> y = np.random.randn(8, 2, 48000)
+        >>> y = torch.randn(8, 2, 48000)
         >>> frames = get_frames(y)
         >>> frames.shape
         (8, 2, 3072, 235)
@@ -143,6 +143,24 @@ def get_frames(
 def get_centered_frames(
     y: Tensor, window_length: int = C.N_FFT, hop_length: int = C.HOP_LENGTH
 ) -> Tensor:
+    """Generates centered frames of moving windows given hop length.
+
+    Centeres the audio before calling `get_frames` on it.
+
+    Args:
+        y: tensor of shape `[..., S]`
+        window_length: length of each frame
+        hop_length: hop length
+
+    Returns:
+        frames: audio frames of shape `[..., W, F]`
+
+    Examples:
+        >>> y = torch.randn(8, 2, 48000)
+        >>> frames = get_centered_frames(y)
+        >>> frames.shape
+        (8, 2, 3072, 251)
+    """
     centered = center(y)
     frames = get_frames(centered)
 
