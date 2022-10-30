@@ -161,8 +161,8 @@ def get_centered_frames(
         >>> frames.shape
         (8, 2, 3072, 251)
     """
-    centered = center(y)
-    frames = get_frames(centered)
+    centered = center(y, window_length, hop_length)
+    frames = get_frames(centered, window_length, hop_length)
 
     return frames
 
