@@ -1,0 +1,4 @@
+outs:
+- md5: b6b10bd61cb45692dd88f34e61578341
+  size: 88991291
+  path: full.pth

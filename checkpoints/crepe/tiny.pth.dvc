@@ -1,0 +1,4 @@
+outs:
+- md5: c79df260a48cb3400a1be3777aec9512
+  size: 1962363
+  path: tiny.pth
