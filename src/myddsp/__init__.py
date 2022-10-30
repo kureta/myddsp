@@ -3,4 +3,4 @@
 You can train the model on a set of monophonic (single pitch) recordings. It also includes a real-
 time inference implementation.
 """
-__version__ = "0.1.1-dev2"
+__version__ = "0.1.1-dev3"
