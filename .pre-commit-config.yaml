@@ -56,7 +56,7 @@ repos:
             "--extend-ignore",
             "E203,E402,E501,F401,F841",
             "--exclude",
-            "logs/*,data/*",
+            "logs/*,data/*,checkpoints/*",
           ]
 
   # python security linter
@@ -119,7 +119,7 @@ repos:
         args:
           [
             "--extend-ignore=E203,E402,E501,F401,F841",
-            "--exclude=logs/*,data/*",
+            "--exclude=logs/*,data/*,checkpoints/*",
           ]
 
   - repo: https://github.com/pre-commit/mirrors-mypy
