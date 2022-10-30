@@ -15,7 +15,9 @@ import torch.nn as nn
 from torch import Tensor
 from torch.nn import functional as F
 
-from .constants import HOP_LENGTH, N_FFT, SAMPLE_RATE
+import myddsp.constants as C
+
+# TODO: use the same loudness to trim silence.
 
 
 def phase_shuffle(y: Tensor) -> Tensor:
@@ -40,10 +42,19 @@ def make_divisible_by_hop_length(y: Tensor) -> Tensor:
     !!! warning
         Example length cannot be zero.
 
+    Args:
+        y: batch of examples, tensor of shape `[B, C, S]`
+
+    Returns:
+        y_padded: padded examples, tensor of shape `[B, C, S]`
+
+    Raises:
+        ValueError: if tensor is not in the required shape.
+
     Examples:
         >>> y = torch.randn(1, 2, 48003)
         >>> y_padded = make_divisible_by_hop_length(y)
-        >>> y_padded.shape[-1] % HOP_LENGTH == 0
+        >>> y_padded.shape[-1] % C.HOP_LENGTH == 0
         True
 
         >>> y = torch.randn(1, 2, 0)
@@ -51,12 +62,6 @@ def make_divisible_by_hop_length(y: Tensor) -> Tensor:
         Traceback (most recent call last):
             ...
         ValueError:...
-
-    Args:
-        y: batch of examples, tensor of shape `[B, C, S]`
-
-    Returns:
-        y_padded: padded examples, tensor of shape `[B, C, S]`
     """
     if len(y.shape) != 3:
         raise ValueError("Tensor must have exactly 3 dimensions [B, C, S]")
@@ -66,29 +71,62 @@ def make_divisible_by_hop_length(y: Tensor) -> Tensor:
     if length <= 0:
         raise ValueError("Example length cannot be zero!")
 
-    remainder = length % HOP_LENGTH
-    padding = HOP_LENGTH - remainder
+    remainder = length % C.HOP_LENGTH
+    padding = C.HOP_LENGTH - remainder
 
     y_padded = F.pad(y, (0, padding), mode="constant", value=0.0)
 
     return y_padded
 
 
+def get_frames(y: np.array, hop_length: int = C.HOP_LENGTH) -> np.array:
+    """Generates frames of moving windows given hop length.
+
+    Window size is a constant, hop length may become a parameter in the future.
+
+    Args:
+        y: tensor of shape `[..., S]`
+        hop_length: hop length
+
+    Returns:
+        frames: audio frames of shape `[..., W, F]`
+
+    Examples:
+        >>> y = np.random.randn(8, 2, 48000)
+        >>> frames = get_frames(y)
+        >>> frames.shape
+        (8, 2, 3072, 235)
+
+    Raises:
+        ValueError: if tensor length is not divisible by hop length or shorter than window length.
+    """
+    length = y.shape[-1]
+    if (length % hop_length) != 0:
+        raise ValueError("Example length must be divisible by hop length!")
+
+    if length < C.N_FFT:
+        raise ValueError("Example length cannot be shorter than the length of a single frame!")
+
+    frames = librosa.util.frame(y, frame_length=C.N_FFT, hop_length=hop_length, writeable=True)
+
+    return frames
+
+
 class LegacyLoudness(nn.Module):
     def __init__(self) -> None:
         super().__init__()
-        frequencies = librosa.fft_frequencies(sr=SAMPLE_RATE, n_fft=N_FFT).astype("float32")
+        frequencies = librosa.fft_frequencies(sr=C.SAMPLE_RATE, n_fft=C.N_FFT).astype("float32")
         a_weighting = librosa.A_weighting(frequencies)[None, :].astype("float32")
         self.register_buffer("a_weighting", torch.from_numpy(a_weighting))
 
     def forward(self, x: Tensor) -> Tensor:
         # to mono
         x = x.mean(1)
-        window = torch.hann_window(N_FFT).to(x.device)
+        window = torch.hann_window(C.N_FFT).to(x.device)
         s = torch.stft(
             x,
-            n_fft=N_FFT,
-            hop_length=HOP_LENGTH,
+            n_fft=C.N_FFT,
+            hop_length=C.HOP_LENGTH,
             window=window,
             return_complex=True,
             # pad_mode="reflect",
