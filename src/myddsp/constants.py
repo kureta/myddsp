@@ -8,6 +8,7 @@ N_FFT = CREPE_N_FFT * SR_RATIO
 
 # TODO: frame rate can be a parameter
 #       only constraint is sample rate has to be divisible by frame rate
+#       then hop length and crepe hop length would also change
 FRAME_RATE = 250
 HOP_LENGTH = SAMPLE_RATE // FRAME_RATE
 CREPE_HOP_LENGTH = HOP_LENGTH // SR_RATIO

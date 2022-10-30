@@ -16,6 +16,13 @@ plugins:
       canonical_version: "latest"
       version_selector: true
 
+markdown_extensions:
+  - admonition
+  - pymdownx.details
+  - pymdownx.superfences
+  - toc:
+      permalink: true
+
 extra:
   version:
     provider: mike
