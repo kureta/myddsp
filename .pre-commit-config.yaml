@@ -7,6 +7,7 @@ repos:
     hooks:
       # list of supported hooks: https://pre-commit.com/hooks.html
       - id: trailing-whitespace
+        exclude: .bumpversion.cfg
       - id: end-of-file-fixer
         exclude: "VERSION"
       - id: check-docstring-first
