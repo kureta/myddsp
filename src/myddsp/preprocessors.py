@@ -1,3 +1,13 @@
+"""Provides a few audio feature extractors.
+
+This module allows the user to extract audio features for feeding into the model.
+
+The module contains the following feature extractors:
+
+- `LegacyLoudness` - The one I used originally. Its dynamic range is somehow compressed, and it is noisy.
+- `Loudness` - Based on`Loudness` from `torchaudio`.
+"""
+
 import librosa
 import torch
 import torch.nn as nn
@@ -5,7 +15,7 @@ import torch.nn as nn
 from .constants import HOP_LENGTH, N_FFT, SAMPLE_RATE
 
 
-class Loudness(nn.Module):
+class LegacyLoudness(nn.Module):
     def __init__(self) -> None:
         super().__init__()
         frequencies = librosa.fft_frequencies(sr=SAMPLE_RATE, n_fft=N_FFT).astype("float32")
