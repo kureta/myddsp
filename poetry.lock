@@ -711,7 +711,7 @@ pgp = ["gpg"]
 
 [[package]]
 name = "dvc"
-version = "2.33.0"
+version = "2.33.1"
 description = "Git for data scientists - manage your code and data together"
 category = "dev"
 optional = false
@@ -723,7 +723,7 @@ colorama = ">=0.3.9"
 configobj = ">=5.0.6"
 distro = ">=1.3.0"
 dpath = ">=2.0.2,<3"
-dvc-data = "0.25.1"
+dvc-data = "0.25.2"
 dvc-gdrive = {version = "2.19.0", optional = true, markers = "extra == \"gdrive\""}
 dvc-http = "2.27.2"
 dvc-render = "0.0.12"
@@ -777,7 +777,7 @@ webhdfs-kerberos = ["dvc-webhdfs[kerberos] (==2.19.0)"]
 
 [[package]]
 name = "dvc-data"
-version = "0.25.1"
+version = "0.25.2"
 description = "dvc data"
 category = "dev"
 optional = false
@@ -787,7 +787,7 @@ python-versions = ">=3.8"
 attrs = ">=21.3.0"
 dictdiffer = ">=0.8.1"
 diskcache = ">=5.2.1"
-dvc-objects = "0.12.1"
+dvc-objects = "0.12.2"
 funcy = ">=1.14"
 nanotime = ">=0.5.2"
 pygtrie = ">=2.3.2"
@@ -832,7 +832,7 @@ tests = ["Pygments (==2.10.0)", "collective.checkdocs (==0.2)", "crc32c (==2.2.p
 
 [[package]]
 name = "dvc-objects"
-version = "0.12.1"
+version = "0.12.2"
 description = "dvc objects"
 category = "dev"
 optional = false
@@ -1400,6 +1400,7 @@ python-versions = ">=3.7"
 [package.dependencies]
 attrs = ">=19.2.0"
 exceptiongroup = {version = ">=1.0.0", markers = "python_version < \"3.11\""}
+numpy = {version = ">=1.9.0", optional = true, markers = "extra == \"numpy\""}
 sortedcontainers = ">=2.1.0,<3.0.0"
 
 [package.extras]
@@ -1447,11 +1448,11 @@ python-versions = "*"
 
 [[package]]
 name = "ipykernel"
-version = "6.16.2"
+version = "6.17.0"
 description = "IPython Kernel for Jupyter"
 category = "main"
 optional = false
-python-versions = ">=3.7"
+python-versions = ">=3.8"
 
 [package.dependencies]
 appnope = {version = "*", markers = "platform_system == \"Darwin\""}
@@ -3712,7 +3713,7 @@ test = ["zope.testing"]
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.10"
-content-hash = "7ca256ca5510b83e5d40d4eef7feccf46d26f4c89685d8565fccf8f40218419f"
+content-hash = "e98d8e2a6e52ff1d6757d0a3dd283e4d39f881b22dc264babedfe186dff35720"
 
 [metadata.files]
 absl-py = [
@@ -4361,12 +4362,12 @@ dulwich = [
     {file = "dulwich-0.20.50.tar.gz", hash = "sha256:50a941796b2c675be39be728d540c16b5b7ce77eb9e1b3f855650ece6832d2be"},
 ]
 dvc = [
-    {file = "dvc-2.33.0-py3-none-any.whl", hash = "sha256:a4f1c417036608f917698607e5b51ec0fa53ce7a0340eb47022a329e5b4b93d0"},
-    {file = "dvc-2.33.0.tar.gz", hash = "sha256:22ca7b62c678e3056234a67bbce0d69b1a95c9f442b9e66e98a6b271939bc6e3"},
+    {file = "dvc-2.33.1-py3-none-any.whl", hash = "sha256:ae73593789072ac775e9015e122f4096def0da5dbea2725b6d01a74b0e8dde70"},
+    {file = "dvc-2.33.1.tar.gz", hash = "sha256:ece7d6eca5c68a33b2d6a5b742b29cb8db9f1dd616099ad0722e683e214d79d2"},
 ]
 dvc-data = [
-    {file = "dvc-data-0.25.1.tar.gz", hash = "sha256:8c3baaaeecd621f0ff30b8ac8f5dae033876000cb177adea7b3e5230db33c287"},
-    {file = "dvc_data-0.25.1-py3-none-any.whl", hash = "sha256:d3118f9dd3955e96b643cb5889457e8aadbdcf36cd07e6a26c77797d2f4c1e65"},
+    {file = "dvc-data-0.25.2.tar.gz", hash = "sha256:7d2cdb6cd6ee060ecf178ab5965774a08e28786352b536066681f98c898f3a74"},
+    {file = "dvc_data-0.25.2-py3-none-any.whl", hash = "sha256:db1ad08bebf9f10b4cb197cc8ceb86190ed2dd4c39be63a4f47a70449e5d6a63"},
 ]
 dvc-gdrive = [
     {file = "dvc-gdrive-2.19.0.tar.gz", hash = "sha256:9fe1ec52f31822df37a56fb06f7eb696a936294145a16ab0498c664f17fa0f1a"},
@@ -4377,8 +4378,8 @@ dvc-http = [
     {file = "dvc_http-2.27.2-py3-none-any.whl", hash = "sha256:58da8d1877bdc6db559d3c64f3ce304c30518dc85e5df29814fe7e56a7e72d5f"},
 ]
 dvc-objects = [
-    {file = "dvc-objects-0.12.1.tar.gz", hash = "sha256:6eb05a84ae288a77b7b787bc28fa419403a949f9dc6723acbddf247f16732d9d"},
-    {file = "dvc_objects-0.12.1-py3-none-any.whl", hash = "sha256:90a4265db66bf1d581c9a09aac7bffef9111d9ffd039555eefa7fe9523b79ed2"},
+    {file = "dvc-objects-0.12.2.tar.gz", hash = "sha256:42b254f3f0932d4dc68213a86cf1b5a666a2b75fd0f3715238adc13ae70d67a6"},
+    {file = "dvc_objects-0.12.2-py3-none-any.whl", hash = "sha256:ae6d9e5555cc42aa07dd0bab0376bc57f87865142187ada5c79a0b2184033d70"},
 ]
 dvc-render = [
     {file = "dvc-render-0.0.12.tar.gz", hash = "sha256:faf331a37f0f3999284e2c7d16d76a51d073b93156bed145f32d0215c699d26f"},
@@ -4711,8 +4712,8 @@ iniconfig = [
     {file = "iniconfig-1.1.1.tar.gz", hash = "sha256:bc3af051d7d14b2ee5ef9969666def0cd1a000e121eaea580d4a313df4b37f32"},
 ]
 ipykernel = [
-    {file = "ipykernel-6.16.2-py3-none-any.whl", hash = "sha256:67daf93e5b52456cd8eea87a8b59405d2bb80ae411864a1ea206c3631d8179af"},
-    {file = "ipykernel-6.16.2.tar.gz", hash = "sha256:463f3d87a92e99969b1605cb7a5b4d7b36b7145a0e72d06e65918a6ddefbe630"},
+    {file = "ipykernel-6.17.0-py3-none-any.whl", hash = "sha256:301fdb487587c9bf277025001da97b53697aab73ae1268d9d1ba972a2c5fc801"},
+    {file = "ipykernel-6.17.0.tar.gz", hash = "sha256:e195cf6d8c3dd5d41f3cf8ad831d9891f95d7d18fa6d5fb4d30a713df99b26a4"},
 ]
 ipython = [
     {file = "ipython-8.6.0-py3-none-any.whl", hash = "sha256:91ef03016bcf72dd17190f863476e7c799c6126ec7e8be97719d1bc9a78a59a4"},
