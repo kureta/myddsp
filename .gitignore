@@ -5,3 +5,5 @@ dist/
 .mypy_cache/
 .venv/
 .ipynb_checkpoints/
+.coverage
+.coverage.*
