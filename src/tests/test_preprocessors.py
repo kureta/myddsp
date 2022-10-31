@@ -1,14 +1,10 @@
 import numpy as np
 import torch
-from hypothesis import Verbosity, given, settings
+from hypothesis import given
 from hypothesis import strategies as st
 from hypothesis.extra.numpy import array_shapes, arrays
 
 from myddsp.preprocessors import get_centered_frames, get_frames
-
-settings.register_profile("ci", max_examples=1000)
-settings.register_profile("dev", max_examples=10)
-settings.register_profile("debug", max_examples=10, verbosity=Verbosity.verbose)
 
 upper = np.finfo("float32").max
 lower = np.finfo("float32").min

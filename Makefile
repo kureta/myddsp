@@ -7,7 +7,7 @@ test:
 	poetry run pytest --doctest-modules --hypothesis-show-statistics
 
 coverage_run:
-	poetry run coverage run -m pytest --doctest-modules
+	poetry run coverage run -m pytest --doctest-modules -q
 
 coverage_report:
 	poetry run coverage report

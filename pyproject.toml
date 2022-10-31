@@ -63,6 +63,7 @@ nbstripout = "^0.6.1"
 black = {extras = ["d"], version = "^22.10.0"}
 coverage = "^6.5.0"
 hypothesis = {extras = ["numpy"], version = "^6.56.4"}
+python-dotenv = "^0.21.0"
 
 [build-system]
 requires = ["poetry-core"]
