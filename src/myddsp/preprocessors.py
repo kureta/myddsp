@@ -9,7 +9,6 @@ The module contains the following feature extractors:
 """
 import einops
 import librosa
-import numpy as np
 import torch
 from torch import Tensor, nn
 from torch.nn import functional as F
@@ -18,22 +17,6 @@ import myddsp.constants as C
 from myddsp.crepe import load_model
 
 # TODO: use the same loudness to trim silence.
-
-
-def phase_shuffle(y: Tensor) -> Tensor:
-    """Randomizes the phase of an audio signal.
-
-    Args:
-        y: tensor of shape `[..., S]`
-
-    Returns:
-        y_phase_randomized: phase shuffled tensor of shape `[..., S]`
-    """
-    s = torch.fft.rfft(y)
-    s_phase_randomized = torch.polar(s.abs(), torch.rand_like(s.angle()) * 2.0 * np.pi)
-    y_phase_randomized = torch.fft.irfft(s_phase_randomized)
-
-    return y_phase_randomized
 
 
 def make_divisible_by_hop_length(
