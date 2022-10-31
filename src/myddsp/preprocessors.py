@@ -11,9 +11,9 @@ import einops
 import librosa
 import torch
 from torch import Tensor, nn
-from torch.nn import functional as F
+from torch.nn import functional as F  # noqa
 
-import myddsp.constants as C
+import myddsp.constants as C  # noqa
 from myddsp.crepe import load_model
 
 # TODO: use the same loudness to trim silence.
@@ -36,13 +36,13 @@ def make_divisible_by_hop_length(
         ValueError: if tensor is not in the required shape.
 
     Examples:
-        >>> y = torch.randn(1, 2, 48003)
-        >>> y_padded = make_divisible_by_hop_length(y)
-        >>> y_padded.shape[-1] % C.HOP_LENGTH == 0
+        >>> signal = torch.randn(1, 2, 48003)
+        >>> signal_padded = make_divisible_by_hop_length(signal)
+        >>> signal_padded.shape[-1] % C.HOP_LENGTH == 0
         True
 
-        >>> y = torch.randn(1, 2, 0)
-        >>> make_divisible_by_hop_length(y)
+        >>> signal = torch.randn(1, 2, 0)
+        >>> make_divisible_by_hop_length(signal)
         Traceback (most recent call last):
             ...
         ValueError:...
@@ -103,9 +103,9 @@ def get_frames(y: Tensor, window_length: int = C.N_FFT, hop_length: int = C.HOP_
         frames: audio frames of shape `[..., W, F]`
 
     Examples:
-        >>> y = torch.randn(8, 2, 48000)
-        >>> frames = get_frames(y)
-        >>> frames.shape
+        >>> signal = torch.randn(8, 2, 48000)
+        >>> signal_frames = get_frames(signal)
+        >>> signal_frames.shape
         torch.Size([8, 2, 3072, 235])
 
     Raises:
@@ -138,9 +138,9 @@ def get_centered_frames(
         frames: audio frames of shape `[..., W, F]`
 
     Examples:
-        >>> y = torch.randn(8, 2, 48000)
-        >>> frames = get_centered_frames(y)
-        >>> frames.shape
+        >>> signal = torch.randn(8, 2, 48000)
+        >>> signal_frames = get_centered_frames(signal)
+        >>> signal_frames.shape
         torch.Size([8, 2, 3072, 251])
     """
     centered = center(y, window_length, hop_length)
@@ -191,7 +191,6 @@ class F0(nn.Module):
         x = x.mean(1)
         frames = get_centered_frames(x, C.CREPE_N_FFT, C.CREPE_HOP_LENGTH)
 
-        b, n, f = frames.shape
         batched = einops.rearrange(frames, "b n f -> (b f) n")
         zeroed = batched - batched.mean(dim=1, keepdim=True)
         normalized = zeroed / zeroed.std(dim=1, keepdim=True)
