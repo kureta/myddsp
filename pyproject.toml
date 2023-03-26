@@ -39,9 +39,9 @@ wandb = "^0.13.4"
 jupyter = "^1.0.0"
 matplotlib = "^3.6.1"
 einops = "^0.5.0"
-torch = { url = "https://download.pytorch.org/whl/nightly/cu118/torch-2.0.0.dev20230207%2Bcu118-cp310-cp310-linux_x86_64.whl" }
-torchaudio = { url = "https://download.pytorch.org/whl/nightly/cu118/torchaudio-2.0.0.dev20230207%2Bcu118-cp310-cp310-linux_x86_64.whl" }
-lightning = "^1.9.0"
+torch = "^2.0.0"
+torchaudio = "^2.0.1"
+lightning = "^2.0.0"
 
 [tool.poetry.group.dev]
 optional = true
@@ -62,12 +62,6 @@ coverage = "^6.5.0"
 hypothesis = { extras = ["numpy"], version = "^6.56.4" }
 python-dotenv = "^0.21.0"
 pyright = "^1.1.277"
-
-[[tool.poetry.source]]
-name = "pytorch-nightly-cuda"
-url = "https://download.pytorch.org/whl/nightly/cu118"
-default = false
-secondary = true
 
 [build-system]
 requires = ["poetry-core"]
