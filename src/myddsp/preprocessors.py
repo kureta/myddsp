@@ -150,16 +150,25 @@ def get_centered_frames(
 
 
 class Loudness(nn.Module):
-    def __init__(self, window_length: int = C.N_FFT):
+    def __init__(
+        self,
+        window_length: int = C.N_FFT,
+        hop_length: int = C.HOP_LENGTH,
+        sample_rate: int = C.SAMPLE_RATE,
+    ):
         super().__init__()
         self.window_length = window_length
+        self.hop_length = hop_length
+        self.sample_rate = sample_rate
 
-        frequencies = librosa.fft_frequencies(sr=C.SAMPLE_RATE, n_fft=C.N_FFT).astype("float32")
+        frequencies = librosa.fft_frequencies(
+            sr=self.sample_rate, n_fft=self.window_length
+        ).astype("float32")
         a_weighting = librosa.A_weighting(frequencies).astype("float32")
         a_weighting = 10 ** (a_weighting / 10)
         self.register_buffer("a_weighting", torch.from_numpy(a_weighting))
 
-        window = torch.hann_window(window_length)
+        window = torch.hann_window(self.window_length)
         self.register_buffer("window", window)
 
     def forward(self, x: Tensor) -> Tensor:

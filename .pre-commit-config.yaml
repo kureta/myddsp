@@ -17,7 +17,8 @@ repos:
       - id: check-executables-have-shebangs
       - id: check-toml
       - id: check-case-conflict
-      - id: check-added-large-files
+      # large file check clashes with nbstripout
+      # - id: check-added-large-files
 
   # python code formatting
   - repo: https://github.com/psf/black
@@ -65,7 +66,9 @@ repos:
     rev: "1.7.5"
     hooks:
       - id: bandit
-        args: ["-s", "B101"]
+        args:
+          - -s
+          - B101,B301,B403
 
   # yaml formatting
   - repo: https://github.com/pre-commit/mirrors-prettier

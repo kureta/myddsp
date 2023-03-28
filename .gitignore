@@ -10,3 +10,4 @@ dist/
 .hypothesis/
 .env
 pyrightconfig.json
+logs/

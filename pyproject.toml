@@ -42,6 +42,11 @@ einops = "^0.5.0"
 torch = "^2.0.0"
 torchaudio = "^2.0.1"
 lightning = "^2.0.0"
+jupyter-nbextensions-configurator = "^0.6.1"
+ipywidgets = "^8.0.5"
+fastapi = ">=0.80"
+rich = "^13.3.2"
+tensorboard = "^2.12.0"
 
 [tool.poetry.group.dev]
 optional = true
